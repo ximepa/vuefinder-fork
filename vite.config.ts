@@ -36,6 +36,7 @@ export default defineConfig({
                 'cropperjs',
                 '@uppy/core',
                 '@uppy/xhr-upload',
+                'vue3-pdf-app',
             ],
             output: {
 
