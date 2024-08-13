@@ -1,5 +1,5 @@
 {
-  "name": "vuefinder",
+  "name": "@ximepa/vuefinder",
   "version": "2.5.16",
   "description": "Vuefinder is a file manager component for vuejs.",
   "type": "module",
@@ -25,10 +25,7 @@
     "type": "git",
     "url": "git+https://github.com/n1crack/vuefinder.git"
   },
-  "author": {
-    "name": "Yusuf Özdemir",
-    "mail": "yusuf@ozdemir.be"
-  },
+  "author": "Yusuf Özdemir <yusuf@ozdemir.be>",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^18.7.1",
@@ -52,5 +49,11 @@
     "vanilla-lazyload": "^17.8.3",
     "vue": "^3.2.0",
     "vue3-pdf-app": "^1.0.3"
+  },
+  "directories": {
+    "example": "examples"
+  },
+  "bugs": {
+    "url": "https://github.com/n1crack/vuefinder/issues"
   }
 }
