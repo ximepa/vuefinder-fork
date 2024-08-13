@@ -60,7 +60,7 @@
           <div class="vuefinder__explorer__item-grid-content">
             <img src="data:image/png;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
                  class="vuefinder__explorer__item-thumbnail lazy" v-if="(item.mime_type ?? '').startsWith('image') && app.showThumbnails"
-                 :data-src="app.requester.getPreviewUrl(app.fs.adapter, item)" :alt="item.basename" :key="item.path">
+                 :data-src="item.thumb" :alt="item.basename" :key="item.path">
             <ItemIcon :type="item.type" v-else/>
             <div class="vuefinder__explorer__item-extension"
                  v-if="!((item.mime_type ?? '').startsWith('image') && app.showThumbnails) && item.type !== 'dir'" >
@@ -165,6 +165,20 @@ const sortBy = (column) => {
     sort.order = 'asc'
   }
 };
+
+const fetchDocument = (adapter, item) => {
+  app.requester.send({
+    url: '',
+    method: 'get',
+    params: { q: 'preview', adapter: adapter, path: item.path },
+    responseType: 'blob',
+  }).then(blob => {
+    item.image_data = URL.createObjectURL(blob)
+    return item.image_data
+  }).catch((e) => {
+      console.log('catch', e);
+  })
+}
 
 
 onMounted(() => {

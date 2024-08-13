@@ -15,7 +15,7 @@
     </div>
 
     <div class="vuefinder__image-preview__image-container">
-      <img ref="image" class="vuefinder__image-preview__image" :src="app.requester.getPreviewUrl(app.modal.data.adapter, app.modal.data.item)" alt="">
+      <img ref="image" class="vuefinder__image-preview__image" :src="previewImage" alt="">
     </div>
 
     <message v-if="message.length" @hidden="message=''" :error="isError">{{ message }}</message>
@@ -40,6 +40,7 @@ const cropper = ref(null);
 const showEdit = ref(false);
 const message = ref('');
 const isError = ref(false);
+const previewImage = ref('')
 
 const editMode = () => {
   showEdit.value = !showEdit.value;
@@ -54,42 +55,54 @@ const editMode = () => {
   }
 };
 
+const fetchDocument = () => {
+  app.requester.send({
+    url: '',
+    method: 'get',
+    params: { q: 'preview', adapter: app.modal.data.adapter, path: app.modal.data.item.path },
+    responseType: 'blob',
+  }).then(blob => {
+    previewImage.value = URL.createObjectURL(blob);
+  }).catch((e) => {
+      console.log('catch', e);
+  })
+}
+
 const crop = () => {
-  cropper.value
-      .getCroppedCanvas({
-        width: 795,
-        height: 341
+  cropper.value.getCroppedCanvas({
+    width: 795,
+    height: 341
+  }).toBlob(
+    blob => {
+      message.value = '';
+      isError.value = false;
+      const body = new FormData();
+      body.set('file', blob);
+      app.requester.send({
+        url: '',
+        method: 'post',
+        params: {
+          q: 'upload',
+          adapter: app.modal.data.adapter,
+          path: app.modal.data.item.path,
+        },
+        body,
       })
-      .toBlob(
-          blob => {
-            message.value = '';
-            isError.value = false;
-            const body = new FormData();
-            body.set('file', blob);
-            app.requester.send({
-              url: '',
-              method: 'post',
-              params: {
-                q: 'upload',
-                adapter: app.modal.data.adapter,
-                path: app.modal.data.item.path,
-              },
-              body,
-            })
-                .then(data => {
-                  message.value = t('Updated.');
-                  image.value.src = app.requester.getPreviewUrl(app.modal.data.adapter, app.modal.data.item);
-                  editMode();
-                  emit('success');
-                })
-                .catch((e) => {
-                  message.value = t(e.message);
-                  isError.value = true;
-                });
+          .then(data => {
+            message.value = t('Updated.');
+            image.value.src = previewImage.value;
+            editMode();
+            emit('success');
+          })
+          .catch((e) => {
+            message.value = t(e.message);
+            isError.value = true;
           });
+    });
 };
 
 onMounted(() => {
+  fetchDocument()
   emit('success');
 });
 

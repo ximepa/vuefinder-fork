@@ -4,8 +4,7 @@
       {{ app.modal.data.item.basename }}
     </h3>
     <div>
-      <video class="vuefinder__video-preview__video" preload controls>
-        <source :src="getVideoUrl()" type="video/mp4">
+      <video class="vuefinder__video-preview__video" preload controls ref="videoPlayer">
         Your browser does not support the video tag.
       </video>
     </div>
@@ -13,16 +12,29 @@
 </template>
 
 <script setup>
-import {inject, onMounted} from 'vue';
+import { inject, onMounted, ref } from 'vue';
 
 const app = inject("ServiceContainer");
 const emit = defineEmits(['success']);
+const previewVideo = ref('');
+const videoPlayer = ref(null);
 
-const getVideoUrl = () => {
-  return app.requester.getPreviewUrl(app.modal.data.adapter, app.modal.data.item)
+const fetchDocument = () => {
+  app.requester.send({
+    url: '',
+    method: 'get',
+    params: { q: 'preview', adapter: app.modal.data.adapter, path: app.modal.data.item.path },
+    responseType: 'blob',
+  }).then(blob => {
+    previewVideo.value = URL.createObjectURL(blob);
+    videoPlayer.value.src = previewVideo.value;
+  }).catch((e) => {
+      console.log('catch', e);
+  })
 }
 
 onMounted(() => {
+  fetchDocument()
   emit('success');
 });
 

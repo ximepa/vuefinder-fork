@@ -50,6 +50,7 @@
     "mitt": "^3.0.0",
     "overlayscrollbars": "^2.7.3",
     "vanilla-lazyload": "^17.8.3",
-    "vue": "^3.2.0"
+    "vue": "^3.2.0",
+    "vue3-pdf-app": "^1.0.3"
   }
 }
